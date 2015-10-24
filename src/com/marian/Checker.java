@@ -5,7 +5,6 @@ import org.bouncycastle.crypto.engines.RC4Engine;
 import org.bouncycastle.crypto.params.KeyParameter;
 
 import javax.crypto.spec.SecretKeySpec;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * Created by marian on 23.10.15.
@@ -16,14 +15,14 @@ public class Checker extends Thread {
     private final byte end;
     private final byte[] key;
     private final byte[] cipher;
-    private final CountDownLatch latch;
+    private final CheckerSemaphore semaphore;
 
-    public Checker(int begin, int end, byte[] key, byte[] cipher, CountDownLatch latch) {
+    public Checker(int begin, int end, byte[] key, byte[] cipher, CheckerSemaphore semaphore) {
         this.begin = (byte) begin;
         this.end = (byte) end;
         this.key = key;
         this.cipher = cipher;
-        this.latch = latch;
+        this.semaphore = semaphore;
     }
 
 
@@ -36,9 +35,9 @@ public class Checker extends Thread {
         for (byte i0 = begin; i0 < end; i0++) {
             key[0] = getCharacterForNumber(i0);
             for (byte i1 = 0; i1 < 16; i1++) {
-                key[1] = getCharacterForNumber(i1);;
-                for (byte i2= 0; i2 < 16; i2++) {
-                    key[2] = getCharacterForNumber(i2);;
+                key[1] = getCharacterForNumber(i1);
+                for (byte i2 = 0; i2 < 16; i2++) {
+                    key[2] = getCharacterForNumber(i2);
                     for (byte i3 = 0; i3 < 16; i3++) {
                         key[3] = getCharacterForNumber(i3);
                         for (byte i4 = 0; i4 < 16; i4++) {
@@ -49,12 +48,7 @@ public class Checker extends Thread {
                                     key[6] = getCharacterForNumber(i6);
                                     for (byte i7 = 0; i7 < 16; i7++) {
                                         key[7] = getCharacterForNumber(i7);
-                                        byte[] decoded = decode();
-                                        boolean valid = MessageValidator.validate(decoded);
-                                        if (valid) {
-                                            MessagePrinter.printMessage("Key: ", key, " ");
-                                            MessagePrinter.printMessage("Value: ", decoded, "");
-                                        }
+                                        checkSolution();
                                     }
                                 }
                             }
@@ -63,19 +57,29 @@ public class Checker extends Thread {
                 }
             }
         }
-        latch.countDown();
+        semaphore.countDown();
     }
 
-private byte getCharacterForNumber(byte number) {
-    if (number >= 0 && number <= 9) {
-        return (byte) (number + 48);
-    } else {
-        return (byte) (number + 87);
+    private void checkSolution() {
+        byte[] decoded = decode();
+        boolean valid = MessageValidator.validate(decoded);
+        if (valid) {
+            MessagePrinter.printMessage("Key: ", key, " ");
+            MessagePrinter.printMessage("Value: ", decoded, "");
+            semaphore.done();
+        }
     }
-}
+
+    private byte getCharacterForNumber(byte number) {
+        if (number >= 0 && number <= 9) {
+            return (byte) (number + 48);
+        } else {
+            return (byte) (number + 87);
+        }
+    }
 
     private byte[] decode() {
-        SecretKeySpec secretKey = new SecretKeySpec(key,"RC4");
+        SecretKeySpec secretKey = new SecretKeySpec(key, "RC4");
         RC4Engine engine = new RC4Engine();
         CipherParameters params = new KeyParameter(secretKey.getEncoded());
         engine.init(false, params);
