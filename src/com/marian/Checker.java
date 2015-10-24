@@ -33,28 +33,28 @@ public class Checker extends Thread {
     }
 
     private void checkSolutions() {
-        for (byte i8 = begin; i8 <= end; i8++) {
-            System.out.println(i8);
-            key[8] = i8;
-            for (byte i9 = 0; i9 <= 16; i9++) {
-                key[9] = i9;
-                for (byte i10= 0; i10 <= 16; i10++) {
-                    key[10] = i10;
-                    for (byte i11 = 0; i11 <= 16; i11++) {
-                        key[11] = i11;
-                        for (byte i12 = 0; i12 <= 16; i12++) {
-                            key[12] = i12;
-                            for (byte i13 = 0; i13 <= 16; i13++) {
-                                key[13] = i13;
-                                for (byte i14 = 0; i14 <= 16; i14++) {
-                                    key[14] = i14;
-                                    for (byte i15 = 0; i15 <= 16; i15++) {
-                                        key[15] = i15;
+        for (byte i0 = begin; i0 < end; i0++) {
+            System.out.println("Wątek " + begin / 2 + " zaczyna nową pętlę główną");
+            key[0] = i0;
+            for (byte i1 = 0; i1 < 16; i1++) {
+                key[1] = i1;
+                for (byte i2= 0; i2 < 16; i2++) {
+                    key[2] = i2;
+                    for (byte i3 = 0; i3 < 16; i3++) {
+                        key[3] = i3;
+                        for (byte i4 = 0; i4 < 16; i4++) {
+                            key[4] = i4;
+                            for (byte i5 = 0; i5 < 16; i5++) {
+                                key[5] = i5;
+                                for (byte i6 = 0; i6 < 16; i6++) {
+                                    key[6] = i6;
+                                    for (byte i7 = 0; i7 < 16; i7++) {
+                                        key[7] = i7;
                                         byte[] decoded = decode();
                                         boolean valid = MessageValidator.validate(decoded);
                                         if (valid) {
-                                            MessagePrinter.printMessage("Key: ", key);
-                                            MessagePrinter.printMessage("Value: ", decoded);
+                                            MessagePrinter.printMessage("Key: ", key, " ");
+                                            MessagePrinter.printMessage("Value: ", decoded, "");
                                         }
                                     }
                                 }

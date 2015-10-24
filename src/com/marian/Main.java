@@ -5,7 +5,7 @@ import java.util.concurrent.CountDownLatch;
 public class Main {
 
     private static final byte[] cipher = CipherReader.readCipherFromFile("c.txt");
-    private static final byte[] key = {0x8, 0xb, 0x5, 0xa, 0xe, 0x3, 0x7, 0x2, 0, 0, 0, 0, 0, 0, 0, 0};
+    private static final byte[] key = {0, 0, 0, 0, 0, 0, 0, 0, 0x8, 0xb, 0x5, 0xa, 0xe, 0x3, 0x7, 0x2};
 
     public static void main(String[] args) throws InterruptedException {
         Checker[] checkers = new Checker[8];
