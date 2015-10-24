@@ -7,9 +7,11 @@ import java.util.concurrent.CountDownLatch;
  */
 public class CheckerSemaphore {
     private final CountDownLatch latch;
+    private final int count;
 
     public CheckerSemaphore(int value) {
         latch = new CountDownLatch(value);
+        count = value;
     }
 
     public void await() throws InterruptedException {
@@ -21,7 +23,6 @@ public class CheckerSemaphore {
     }
 
     public void done() {
-        long count = latch.getCount();
         for (long i = 0; i < count; i++) {
             latch.countDown();
         }
